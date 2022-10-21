@@ -1,0 +1,22 @@
+#storage "s3" {
+## access_key = "ACCESS_KEY_HERE"
+##  secret_key = "SECRET_KEY_HERE"
+##  bucket     = "vault-secret"
+#  region	 = "us-east-2"
+#}
+
+#listener "tcp" {
+##	address     = "0.0.0.0:8200"
+#	tls_disable = 1
+
+disable_mlock = true
+ui            = true
+
+listener "tcp" {
+  address     = "127.0.0.1:8200"
+  tls_disable = "true"
+}
+
+storage "file" {
+  path = "/tmp/vault-data"
+}
