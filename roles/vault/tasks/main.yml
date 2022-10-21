@@ -12,6 +12,7 @@
     comment: "vault nologin User"
     createhome: "no"
     state: present
+  become: true
 
 - name: Install prerequisites
   package:
@@ -29,6 +30,7 @@
     mode: 0755
     checksum: "{{vault_checksum}}"
   register: vault_download
+  become: yes
 
 - name: Creates directory
   file:
@@ -37,6 +39,7 @@
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
     mode: 0775
+  become: yes
 
 - name: "Unzip vault archive"
   unarchive:
@@ -46,12 +49,15 @@
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
     mode: 0755
+  become: yes
 
 - name: "Set vault binary capabilities"
   capabilities:
     path: /usr/local/bin/vault
     capability: cap_ipc_lock+ep
     state: present
+  become: yes
+  ignore_errors: yes
 
 - name: Copy systemd init file
   template:
@@ -60,6 +66,7 @@
     owner: root
     group: root
   notify: systemd_reload
+  become: yes
 
 - name: config file
   template:
@@ -67,9 +74,11 @@
     dest: "{{ vault_config_path }}"
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
+  become: yes
 
 - name: vault service
   service:
     name: vault
     state: started
     enabled: yes
+  become: yes
